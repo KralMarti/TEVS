@@ -1,4 +1,4 @@
-package at.fhburgenland.tevs.serviceRegistry;
+package at.fhburgenland.tevs.serviceregistry;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
