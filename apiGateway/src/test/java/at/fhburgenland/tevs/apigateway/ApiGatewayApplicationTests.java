@@ -1,10 +1,10 @@
-package at.fhburgenland.tevs.restfulService;
+package at.fhburgenland.tevs.apigateway;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class RestfulServiceApplicationTests {
+class ApiGatewayApplicationTests {
 
 	@Test
 	void contextLoads() {
