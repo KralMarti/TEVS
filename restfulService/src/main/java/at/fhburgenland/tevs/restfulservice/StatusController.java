@@ -28,6 +28,12 @@ public class StatusController {
         this.fanoutExchange = fanoutExchange;
     }
 
+    @GetMapping
+    public ResponseEntity<Map<String, Status>> getStatus() {
+        return ResponseEntity.ok(statusMap);
+    }
+
+
     @PostMapping
     public ResponseEntity postStatus (@RequestBody Status status) {
         System.out.println(status.getUsername());
@@ -36,9 +42,9 @@ public class StatusController {
             RMQStatus rmqStatus = new RMQStatus(status, RequestType.POST);
             fanoutExchange.publishMessage(rmqStatus);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         } catch (TimeoutException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
         return ResponseEntity.ok("Status erfolgreich gesendet!");
     }
@@ -51,16 +57,28 @@ public class StatusController {
             RMQStatus rmqStatus = new RMQStatus(status, RequestType.PUT);
             fanoutExchange.publishMessage(rmqStatus);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         } catch (TimeoutException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
         return ResponseEntity.ok("Status erfolgreich gesendet!");
     }
 
-    @GetMapping
-    public ResponseEntity<Map<String, Status>> getStatus() {
-        return ResponseEntity.ok(statusMap);
+    @DeleteMapping("{username}")
+    ResponseEntity deleteStatus(@PathVariable String username) {
+        Status status = statusMap.get(username);
+        if (status != null) {
+            try {
+                RMQStatus rmqStatus = new RMQStatus(status, RequestType.DELETE);
+                fanoutExchange.publishMessage(rmqStatus);
+                return ResponseEntity.ok("Status erfolgreich gelöscht!");
+            } catch (IOException | TimeoutException e) {
+                e.printStackTrace();
+                return ResponseEntity.internalServerError().body("Es ist ein Fehler beim Löschen des Status aufgetreten!");
+            }
+        } else {
+            return ResponseEntity.badRequest().body("Es existiert kein Status für diesen Usernamen");
+        }
     }
 
 }

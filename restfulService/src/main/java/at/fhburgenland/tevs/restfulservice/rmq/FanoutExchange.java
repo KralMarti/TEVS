@@ -2,6 +2,7 @@ package at.fhburgenland.tevs.restfulservice.rmq;
 
 import at.fhburgenland.tevs.restfulservice.StatusController;
 import at.fhburgenland.tevs.restfulservice.models.RMQStatus;
+import at.fhburgenland.tevs.restfulservice.models.RequestType;
 import at.fhburgenland.tevs.restfulservice.models.Status;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -69,16 +70,35 @@ public class FanoutExchange {
             ObjectMapper objectMapper = new ObjectMapper();
             rmqStatus = objectMapper.readValue(jsonRMQStatus, RMQStatus.class);
         } catch (JsonMappingException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
         if (rmqStatus != null) {
             switch (rmqStatus.getRequestType()) {
-                case POST, PUT -> StatusController.statusMap.put(rmqStatus.getStatus().getUsername(), rmqStatus.getStatus());
+                case POST -> {
+                    if (rmqStatus.getStartupStatusMap() != null) {
+                        if(StatusController.statusMap == null || StatusController.statusMap.isEmpty()) {
+                            StatusController.statusMap = rmqStatus.getStartupStatusMap();
+                        }
+                    } else {
+                        StatusController.statusMap.put(rmqStatus.getStatus().getUsername(), rmqStatus.getStatus());
+                    }
+                }
+                case PUT -> StatusController.statusMap.put(rmqStatus.getStatus().getUsername(), rmqStatus.getStatus());
                 case DELETE ->  {
                     if (StatusController.statusMap.containsKey(rmqStatus.getStatus().getUsername())) {
                         StatusController.statusMap.remove(rmqStatus.getStatus().getUsername());
+                    }
+                }
+                case STARTUP_SYNC -> {
+                    if (StatusController.statusMap != null && !StatusController.statusMap.isEmpty()) {
+                        RMQStatus rmqStatusSync = new RMQStatus(null, RequestType.POST, StatusController.statusMap);
+                        try {
+                            publishMessage(rmqStatusSync);
+                        } catch (IOException | TimeoutException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
             }

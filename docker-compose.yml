@@ -5,43 +5,7 @@ networks:
     name: ds-components
 
 services:
-  rabbitmq:
-    container_name: "rabbitmq"
-    image: rabbitmq:3.8-management-alpine
-    environment:
-      - RABBITMQ_DEFAULT_USER=rmq
-      - RABBITMQ_DEFAULT_PASS=admin
-    ports:
-      - "5672:5672"
-      - "15672:15672"
-    networks:
-      - components
-
-  service-registry:
-    build: 
-      context: serviceRegistry
-    container_name: service-registry
-    ports:
-      - "8761:8761"
-    depends_on:
-      - rabbitmq
-    networks:
-      - components
-
-  api-gateway:
-    build: 
-      context: apiGateway
-    environment: 
-      eureka.client.service-url.defaultZone: "http://service-registry:8761/eureka/"
-    container_name: api-gateway
-    ports:
-      - "8080:8080"
-    depends_on:
-      - service-registry
-    networks:
-      - components
-
-  restful-service:
+  restful-service-one:
     build:
       context: restfulService
     environment:
@@ -49,10 +13,7 @@ services:
       spring.rabbitmq.host: "rabbitmq"
     restart: always
     deploy:
-      replicas: 2
-    depends_on:
-      - service-registry
-      - rabbitmq
+      replicas: 1
     networks:
       - components
 
