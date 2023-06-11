@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.rabbitmq.client.BuiltinExchangeType;
 import com.rabbitmq.client.Channel;
+import jakarta.annotation.PreDestroy;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -103,5 +104,11 @@ public class FanoutExchange {
         }
     }
 
+    @PreDestroy
+    public void deleteQueue() throws IOException, TimeoutException {
+        Channel channel = ConnectionManager.getConnection().createChannel();
+        channel.queueDelete(QUEUE_NAME);
+        channel.close();
+    }
 
 }
