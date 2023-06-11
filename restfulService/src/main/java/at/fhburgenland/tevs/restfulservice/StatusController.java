@@ -9,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeoutException;
@@ -36,9 +38,8 @@ public class StatusController {
 
     @PostMapping
     public ResponseEntity postStatus (@RequestBody Status status) {
-        System.out.println(status.getUsername());
-        System.out.println(status.getStatusText());
         try {
+            status.setTimeStamp(new Date());
             RMQStatus rmqStatus = new RMQStatus(status, RequestType.POST);
             fanoutExchange.publishMessage(rmqStatus);
         } catch (IOException e) {
@@ -51,9 +52,8 @@ public class StatusController {
 
     @PutMapping
     public ResponseEntity putStatus (@RequestBody Status status) {
-        System.out.println(status.getUsername());
-        System.out.println(status.getStatusText());
         try {
+            status.setTimeStamp(new Date());
             RMQStatus rmqStatus = new RMQStatus(status, RequestType.PUT);
             fanoutExchange.publishMessage(rmqStatus);
         } catch (IOException e) {

@@ -3,14 +3,12 @@ package at.fhburgenland.tevs.restfulservice.rmq;
 import at.fhburgenland.tevs.restfulservice.StatusController;
 import at.fhburgenland.tevs.restfulservice.models.RMQStatus;
 import at.fhburgenland.tevs.restfulservice.models.RequestType;
-import at.fhburgenland.tevs.restfulservice.models.Status;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.rabbitmq.client.BuiltinExchangeType;
 import com.rabbitmq.client.Channel;
-import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;

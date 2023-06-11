@@ -1,9 +1,10 @@
 package at.fhburgenland.tevs.restfulservice.models;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.util.Date;
+
 
 @Getter
 @Setter
@@ -13,4 +14,6 @@ import java.time.LocalDateTime;
 public class Status {
     private String username;
     private String statusText;
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
+    private Date timeStamp;
 }
