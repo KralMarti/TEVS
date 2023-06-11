@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,10 +19,9 @@ import java.util.concurrent.TimeoutException;
 @RequestMapping(value = "/status")
 @CrossOrigin
 public class StatusController {
-    private final RabbitTemplate rabbitTemplate;
-    private FanoutExchange fanoutExchange;
-
     public static Map<String, Status> statusMap = new HashMap<>();
+    private final RabbitTemplate rabbitTemplate;
+    private final FanoutExchange fanoutExchange;
 
     public StatusController(RabbitTemplate rabbitTemplate, FanoutExchange fanoutExchange) {
         this.rabbitTemplate = rabbitTemplate;
@@ -37,11 +35,11 @@ public class StatusController {
 
 
     @PostMapping
-    public ResponseEntity postStatus (@RequestBody Status status) {
+    public ResponseEntity postStatus(@RequestBody Status status) {
         try {
             status.setTimeStamp(new Date());
             RMQStatus rmqStatus = new RMQStatus(status, RequestType.POST);
-            fanoutExchange.publishMessage(rmqStatus);
+            FanoutExchange.publishMessage(rmqStatus);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (TimeoutException e) {
@@ -51,11 +49,11 @@ public class StatusController {
     }
 
     @PutMapping
-    public ResponseEntity putStatus (@RequestBody Status status) {
+    public ResponseEntity putStatus(@RequestBody Status status) {
         try {
             status.setTimeStamp(new Date());
             RMQStatus rmqStatus = new RMQStatus(status, RequestType.PUT);
-            fanoutExchange.publishMessage(rmqStatus);
+            FanoutExchange.publishMessage(rmqStatus);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (TimeoutException e) {
@@ -70,7 +68,7 @@ public class StatusController {
         if (status != null) {
             try {
                 RMQStatus rmqStatus = new RMQStatus(status, RequestType.DELETE);
-                fanoutExchange.publishMessage(rmqStatus);
+                FanoutExchange.publishMessage(rmqStatus);
                 return ResponseEntity.ok("Status erfolgreich gelöscht!");
             } catch (IOException | TimeoutException e) {
                 e.printStackTrace();

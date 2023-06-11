@@ -11,7 +11,7 @@ import java.util.concurrent.TimeoutException;
 @Component
 public class StatusReceiver {
 
-    private FanoutExchange fanoutExchange;
+    private final FanoutExchange fanoutExchange;
 
     public StatusReceiver(FanoutExchange fanoutExchange) {
         this.fanoutExchange = fanoutExchange;

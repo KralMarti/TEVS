@@ -6,7 +6,6 @@ import at.fhburgenland.tevs.restfulservice.models.RequestType;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.rabbitmq.client.BuiltinExchangeType;
 import com.rabbitmq.client.Channel;
 import jakarta.annotation.PreDestroy;
@@ -77,7 +76,7 @@ public class FanoutExchange {
             switch (rmqStatus.getRequestType()) {
                 case POST -> {
                     if (rmqStatus.getStartupStatusMap() != null) {
-                        if(StatusController.statusMap == null || StatusController.statusMap.isEmpty()) {
+                        if (StatusController.statusMap == null || StatusController.statusMap.isEmpty()) {
                             StatusController.statusMap = rmqStatus.getStartupStatusMap();
                         }
                     } else {
@@ -85,10 +84,8 @@ public class FanoutExchange {
                     }
                 }
                 case PUT -> StatusController.statusMap.put(rmqStatus.getStatus().getUsername(), rmqStatus.getStatus());
-                case DELETE ->  {
-                    if (StatusController.statusMap.containsKey(rmqStatus.getStatus().getUsername())) {
-                        StatusController.statusMap.remove(rmqStatus.getStatus().getUsername());
-                    }
+                case DELETE -> {
+                    StatusController.statusMap.remove(rmqStatus.getStatus().getUsername());
                 }
                 case STARTUP_SYNC -> {
                     if (StatusController.statusMap != null && !StatusController.statusMap.isEmpty()) {

@@ -26,6 +26,10 @@ public class ConnectionManager {
     @Value("${spring.rabbitmq.port}")
     private String rmqPort;
 
+    public static Connection getConnection() {
+        return connection;
+    }
+
     @PostConstruct
     private void init() {
         try {
@@ -38,10 +42,6 @@ public class ConnectionManager {
         } catch (IOException | TimeoutException e) {
             e.printStackTrace();
         }
-    }
-
-    public static Connection getConnection() {
-        return connection;
     }
 
 }

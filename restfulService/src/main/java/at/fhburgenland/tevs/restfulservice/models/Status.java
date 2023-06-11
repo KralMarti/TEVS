@@ -14,6 +14,6 @@ import java.util.Date;
 public class Status {
     private String username;
     private String statusText;
-    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date timeStamp;
 }
