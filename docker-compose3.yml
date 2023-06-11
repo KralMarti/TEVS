@@ -1,0 +1,19 @@
+version: '3.8'
+
+networks:
+  components:
+    name: ds-components
+
+services:
+  restful-service-one:
+    build:
+      context: restfulService
+    environment:
+      eureka.client.service-url.defaultZone: "http://service-registry:8761/eureka/"
+      spring.rabbitmq.host: "rabbitmq"
+    restart: always
+    deploy:
+      replicas: 1
+    networks:
+      - components
+
